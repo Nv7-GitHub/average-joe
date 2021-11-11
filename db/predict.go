@@ -9,8 +9,8 @@ import (
 const MaxLoops = 20
 
 func (p *Probability) Predict() string {
-	p.lock.RLock()
-	defer p.lock.RUnlock()
+	p.lock.Lock()
+	defer p.lock.Unlock()
 	num := rand.Intn(p.Sum)
 
 	// Sort
@@ -34,7 +34,9 @@ func (c *Chain) Predict() string {
 	start := c.Starters.Predict()
 	sentence.WriteString(start)
 
+	c.lock.RLock()
 	word := c.Chain[start].Predict()
+	c.lock.RUnlock()
 	loops := 0
 	for {
 		if word == "EOS" {
@@ -48,7 +50,10 @@ func (c *Chain) Predict() string {
 
 		sentence.WriteString(" ")
 		sentence.WriteString(word)
+
+		c.lock.RLock()
 		word = c.Chain[word].Predict()
+		c.lock.RUnlock()
 	}
 
 	return sentence.String()

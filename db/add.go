@@ -38,18 +38,28 @@ func (c *Chain) Add(msg string) {
 		} else {
 			_, exists := c.Chain[words[i-1]]
 			if !exists {
+				c.lock.Lock()
 				c.Chain[words[i-1]] = NewProbability()
+				c.lock.Unlock()
 			}
+			c.lock.Lock()
 			c.Chain[words[i-1]].AddWord(word)
+			c.lock.Unlock()
 		}
 
 		// Add EOS
 		if i == len(words)-1 {
+			c.lock.RLock()
 			_, exists := c.Chain[word]
+			c.lock.RLock()
 			if !exists {
+				c.lock.Lock()
 				c.Chain[words[i]] = NewProbability()
+				c.lock.Unlock()
 			}
+			c.lock.Lock()
 			c.Chain[words[i]].AddWord("EOS")
+			c.lock.Unlock()
 		}
 	}
 }

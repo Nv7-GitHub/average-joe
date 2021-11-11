@@ -2,8 +2,6 @@ package db
 
 import "sync"
 
-type empty struct{}
-
 type DB struct {
 	lock *sync.RWMutex
 	Data map[string]Chain // map[guildID]chain
