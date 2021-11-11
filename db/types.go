@@ -25,13 +25,20 @@ type Chain struct {
 
 func NewProbability() *Probability {
 	return &Probability{
-		lock: &sync.RWMutex{},
-		Data: make(map[string]int),
+		lock:  &sync.RWMutex{},
+		Index: make(map[string]*Value),
+		Data:  make([]*Value, 0),
 	}
 }
 
 type Probability struct {
-	lock *sync.RWMutex
-	Data map[string]int // map[word]times said
-	Sum  int
+	lock  *sync.RWMutex
+	Data  []*Value
+	Index map[string]*Value
+	Sum   int
+}
+
+type Value struct {
+	Value string
+	Count int
 }
