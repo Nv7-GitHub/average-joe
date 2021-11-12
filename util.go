@@ -39,8 +39,8 @@ func (b *Bot) Reset(m *discordgo.MessageCreate) {
 	err := b.Chains[m.GuildID].Reset()
 	b.lock.RUnlock()
 	if err != nil {
-		b.dg.ChannelMessageSend(m.ChannelID, err.Error())
+		b.dg.ChannelMessageSendReply(m.ChannelID, err.Error(), m.Reference())
 		return
 	}
-	b.dg.ChannelMessageSend(m.ChannelID, "Reset server!")
+	b.dg.ChannelMessageSendReply(m.ChannelID, "Reset server!", m.Reference())
 }
