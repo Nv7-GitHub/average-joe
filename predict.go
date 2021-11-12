@@ -25,9 +25,11 @@ func (b *Bot) predict(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	})
 
 	prompt := chain.Starter
+	hasPrompt := false
 	dat := i.ApplicationCommandData()
 	if len(dat.Options) > 0 {
 		prompt = dat.Options[0].StringValue()
+		hasPrompt = true
 	}
 	prediction, ok := chn.Predict(prompt)
 	if !ok {
@@ -36,7 +38,11 @@ func (b *Bot) predict(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		})
 		return
 	}
+	// Put prompt in start
+	if hasPrompt {
+		prediction = prompt + " " + prediction
+	}
 	b.dg.FollowupMessageCreate(clientID, i.Interaction, true, &discordgo.WebhookParams{
-		Content: prompt + " " + prediction,
+		Content: prediction,
 	})
 }
