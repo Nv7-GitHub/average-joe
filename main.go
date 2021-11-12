@@ -5,13 +5,13 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/Nv7-Github/average-joe/db"
+	"github.com/Nv7-Github/average-joe/chain"
 )
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	chain, err := db.NewChain("data.txt")
+	chain, err := chain.NewChain("data.txt")
 	if err != nil {
 		panic(err)
 	}
