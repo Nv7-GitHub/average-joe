@@ -9,34 +9,25 @@ type DB struct {
 
 func NewChain() *Chain {
 	return &Chain{
-		lock:     &sync.RWMutex{},
-		Chain:    make(map[string]*Probability),
-		Starters: NewProbability(),
+		lock:  &sync.RWMutex{},
+		Links: make(map[string]*Probability),
 	}
 }
 
 type Chain struct {
-	lock     *sync.RWMutex
-	Chain    map[string]*Probability // map[word]possible words
-	Starters *Probability
+	lock  *sync.RWMutex
+	Links map[string]*Probability // map[word]possible words
 }
 
 func NewProbability() *Probability {
 	return &Probability{
-		lock:  &sync.RWMutex{},
-		Index: make(map[string]*Value),
-		Data:  make([]*Value, 0),
+		lock: &sync.RWMutex{},
+		Data: make(map[string]int),
 	}
 }
 
 type Probability struct {
-	lock  *sync.RWMutex
-	Data  []*Value
-	Index map[string]*Value
-	Sum   int
-}
-
-type Value struct {
-	Value string
-	Count int
+	lock *sync.RWMutex
+	Data map[string]int
+	Sum  int
 }

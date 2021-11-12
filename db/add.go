@@ -4,62 +4,51 @@ import (
 	"strings"
 )
 
-func (p *Probability) AddWord(word string) {
+const (
+	Starter = "SOS" // StartOfSentence
+	Ender   = "EOS" // EndOfSentence
+)
+
+func (p *Probability) AddWord(word string, count int) {
 	p.lock.Lock()
-	_, exists := p.Index[word]
+	_, exists := p.Data[word]
 	if exists {
-		p.Index[word].Count++
+		p.Data[word] += count
 	} else {
-		val := &Value{
-			Value: word,
-			Count: 1,
-		}
-		p.Index[word] = val
-		p.Data = append(p.Data, val)
+		p.Data[word] = count
 	}
 	p.Sum++
 	p.lock.Unlock()
 }
 
-var punctuation = []byte{'.', ',', '?', '!', '\''}
+func (c *Chain) AddLink(start, end string, count int) {
+	c.lock.Lock()
+	_, exists := c.Links[start]
+	if !exists {
+		c.Links[start] = NewProbability()
+	}
+	c.Links[start].AddWord(end, count)
+	c.lock.Unlock()
+}
 
 func (c *Chain) Add(msg string) {
-	msg = strings.ToLower(msg)
-	// Remove punctuation
-	for _, val := range punctuation {
-		msg = strings.ReplaceAll(msg, string(val), "")
+	words := strings.Split(simplify(msg), " ")
+	if len(words) == 0 {
+		return
 	}
-	words := strings.Split(msg, " ")
 
 	// Add words to the chain
 	for i, word := range words {
 		if i == 0 {
-			c.Starters.AddWord(word)
+			// Starter word
+			c.AddLink(Starter, word, 1)
 		} else {
-			_, exists := c.Chain[words[i-1]]
-			if !exists {
-				c.lock.Lock()
-				c.Chain[words[i-1]] = NewProbability()
-				c.lock.Unlock()
-			}
-			c.lock.Lock()
-			c.Chain[words[i-1]].AddWord(word)
-			c.lock.Unlock()
+			c.AddLink(words[i-1], word, 1)
 		}
 
-		// Add EOS
+		// End of sentence
 		if i == len(words)-1 {
-			c.lock.RLock()
-			_, exists := c.Chain[word]
-			c.lock.RLock()
-			if !exists {
-				c.lock.Lock()
-				c.Chain[words[i]] = NewProbability()
-				c.lock.Unlock()
-			}
-			c.lock.Lock()
-			c.Chain[words[i]].AddWord("EOS")
-			c.lock.Unlock()
+			c.AddLink(word, Ender, 1)
 		}
 	}
 }

@@ -2,7 +2,6 @@ package db
 
 import (
 	"math/rand"
-	"sort"
 	"strings"
 )
 
@@ -13,17 +12,12 @@ func (p *Probability) Predict() string {
 	defer p.lock.Unlock()
 	num := rand.Intn(p.Sum)
 
-	// Sort
-	sort.Slice(p.Data, func(i, j int) bool {
-		return p.Data[i].Count > p.Data[j].Count
-	})
-
 	// Weighted random
-	for _, v := range p.Data {
-		if num < v.Count {
-			return v.Value
+	for k, v := range p.Data {
+		if num < v {
+			return k
 		}
-		num -= v.Count
+		num -= v
 	}
 	return ""
 }
@@ -31,15 +25,15 @@ func (p *Probability) Predict() string {
 func (c *Chain) Predict() string {
 	sentence := &strings.Builder{}
 
-	start := c.Starters.Predict()
+	start := c.Links[Starter].Predict()
 	sentence.WriteString(start)
 
 	c.lock.RLock()
-	word := c.Chain[start].Predict()
+	word := c.Links[start].Predict()
 	c.lock.RUnlock()
 	loops := 0
 	for {
-		if word == "EOS" {
+		if word == Ender {
 			break
 		}
 
@@ -52,7 +46,7 @@ func (c *Chain) Predict() string {
 		sentence.WriteString(word)
 
 		c.lock.RLock()
-		word = c.Chain[word].Predict()
+		word = c.Links[word].Predict()
 		c.lock.RUnlock()
 	}
 
