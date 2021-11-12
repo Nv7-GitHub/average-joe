@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-const MaxLoops = 20
+const MaxLoops = 50
 
 func (p *Probability) Predict() string {
 	p.lock.Lock()
