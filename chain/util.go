@@ -2,7 +2,7 @@ package chain
 
 import "strings"
 
-var punctuation = []byte{'.', ',', '?', '!', '\''}
+var punctuation = []byte{'.', ',', '?', '!', '\'', '*'}
 
 func simplify(msg string) string {
 	msg = strings.ToLower(msg)

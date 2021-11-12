@@ -93,6 +93,7 @@ func (c *Chain) Write(entry LinkEntry) error {
 
 // Optimize uses the count value to reduce the number of entries
 func (c *Chain) Optimize() error {
+	c.lock.Lock()
 	var err error
 	c.data, err = os.Create(c.filename)
 	if err != nil {
@@ -100,7 +101,6 @@ func (c *Chain) Optimize() error {
 	}
 
 	// Write
-	c.lock.RLock()
 	for k, v := range c.Links {
 		v.lock.RLock()
 		for kv, val := range v.Data {
@@ -115,7 +115,7 @@ func (c *Chain) Optimize() error {
 		}
 		v.lock.RUnlock()
 	}
-	c.lock.RUnlock()
+	c.lock.Unlock()
 
 	return nil
 }

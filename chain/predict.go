@@ -22,10 +22,24 @@ func (p *Probability) Predict() string {
 	return ""
 }
 
-func (c *Chain) Predict() string {
+func (c *Chain) Predict(prompt string) (string, bool) {
+	if prompt != Starter {
+		split := strings.Split(simplify(prompt), " ")
+		prompt = split[len(split)-1]
+
+		c.lock.RLock()
+		_, exists := c.Links[prompt]
+		c.lock.RUnlock()
+		if !exists {
+			return "", false
+		}
+	}
 	sentence := &strings.Builder{}
 
-	start := c.Links[Starter].Predict()
+	start := c.Links[prompt].Predict()
+	if start == Ender {
+		return "", true
+	}
 	sentence.WriteString(start)
 
 	c.lock.RLock()
@@ -50,5 +64,5 @@ func (c *Chain) Predict() string {
 		c.lock.RUnlock()
 	}
 
-	return sentence.String()
+	return sentence.String(), true
 }
