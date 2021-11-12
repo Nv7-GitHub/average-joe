@@ -13,6 +13,10 @@ type Chain struct {
 	filename string
 }
 
+func (c *Chain) Close() {
+	c.data.Close()
+}
+
 func NewProbability() *Probability {
 	return &Probability{
 		lock: &sync.RWMutex{},
