@@ -7,6 +7,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// Invite: https://discord.com/oauth2/authorize?client_id=908174272478986311&scope=bot%20applications.commands&permissions=3072
+
 func (b *Bot) MsgCreate(dg *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == dg.State.User.ID {
 		return
@@ -17,17 +19,17 @@ func (b *Bot) MsgCreate(dg *discordgo.Session, m *discordgo.MessageCreate) {
 	b.lock.RUnlock()
 	if !exists {
 		// No chain, create one
-		chn, err := chain.NewChain(dbPath + m.GuildID + ".txt")
-
-		b.lock.Lock()
-		b.Chains[m.GuildID] = chn
-		b.lock.Unlock()
-
+		var err error
+		chn, err = chain.NewChain(dbPath + m.GuildID + ".txt")
 		if err != nil {
 			// TODO: Better error handler
 			fmt.Println(err)
 			return
 		}
+
+		b.lock.Lock()
+		b.Chains[m.GuildID] = chn
+		b.lock.Unlock()
 	}
 
 	err := chn.Add(m.Content)
