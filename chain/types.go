@@ -1,22 +1,16 @@
-package db
+package chain
 
-import "sync"
-
-type DB struct {
-	lock *sync.RWMutex
-	Data map[string]Chain // map[guildID]chain
-}
-
-func NewChain() *Chain {
-	return &Chain{
-		lock:  &sync.RWMutex{},
-		Links: make(map[string]*Probability),
-	}
-}
+import (
+	"os"
+	"sync"
+)
 
 type Chain struct {
 	lock  *sync.RWMutex
 	Links map[string]*Probability // map[word]possible words
+
+	data     *os.File
+	filename string
 }
 
 func NewProbability() *Probability {

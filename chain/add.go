@@ -1,4 +1,4 @@
-package db
+package chain
 
 import (
 	"strings"
@@ -21,34 +21,35 @@ func (p *Probability) AddWord(word string, count int) {
 	p.lock.Unlock()
 }
 
-func (c *Chain) AddLink(start, end string, count int) {
-	c.lock.Lock()
-	_, exists := c.Links[start]
-	if !exists {
-		c.Links[start] = NewProbability()
-	}
-	c.Links[start].AddWord(end, count)
-	c.lock.Unlock()
-}
-
-func (c *Chain) Add(msg string) {
+func (c *Chain) Add(msg string) error {
 	words := strings.Split(simplify(msg), " ")
 	if len(words) == 0 {
-		return
+		return nil
 	}
 
 	// Add words to the chain
 	for i, word := range words {
 		if i == 0 {
 			// Starter word
-			c.AddLink(Starter, word, 1)
+			err := c.AddLink(Starter, word, 1)
+			if err != nil {
+				return err
+			}
 		} else {
-			c.AddLink(words[i-1], word, 1)
+			err := c.AddLink(words[i-1], word, 1)
+			if err != nil {
+				return err
+			}
 		}
 
 		// End of sentence
 		if i == len(words)-1 {
-			c.AddLink(word, Ender, 1)
+			err := c.AddLink(word, Ender, 1)
+			if err != nil {
+				return err
+			}
 		}
 	}
+
+	return nil
 }
