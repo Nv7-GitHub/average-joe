@@ -1,5 +1,7 @@
 package joe
 
+// Invite: https://discord.com/oauth2/authorize?client_id=908174272478986311&scope=bot%20applications.commands&permissions=3072
+
 import (
 	_ "embed"
 	"os"

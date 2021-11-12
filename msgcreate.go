@@ -7,8 +7,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// Invite: https://discord.com/oauth2/authorize?client_id=908174272478986311&scope=bot%20applications.commands&permissions=3072
-
 func (b *Bot) MsgCreate(dg *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == dg.State.User.ID {
 		return
@@ -18,6 +16,13 @@ func (b *Bot) MsgCreate(dg *discordgo.Session, m *discordgo.MessageCreate) {
 		_, exists := admins[m.Author.ID]
 		if exists {
 			b.Optimize(m)
+			return
+		}
+	}
+	if m.Content == "!reset" {
+		_, exists := admins[m.Author.ID]
+		if exists {
+			b.Reset(m)
 			return
 		}
 	}

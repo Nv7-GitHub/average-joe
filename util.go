@@ -33,3 +33,14 @@ func (b *Bot) Optimize(m *discordgo.MessageCreate) {
 
 	b.dg.ChannelMessageEdit(m.ChannelID, msg.ID, "Optimized in "+time.Since(start).String()+".")
 }
+
+func (b *Bot) Reset(m *discordgo.MessageCreate) {
+	b.lock.RLock()
+	err := b.Chains[m.GuildID].Reset()
+	b.lock.RUnlock()
+	if err != nil {
+		b.dg.ChannelMessageSend(m.ChannelID, err.Error())
+		return
+	}
+	b.dg.ChannelMessageSend(m.ChannelID, "Reset server!")
+}

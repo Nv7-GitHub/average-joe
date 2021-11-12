@@ -119,3 +119,18 @@ func (c *Chain) Optimize() error {
 
 	return nil
 }
+
+func (c *Chain) Reset() error {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+
+	c.Links = make(map[string]*Probability)
+
+	var err error
+	c.data, err = os.Create(c.filename)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
