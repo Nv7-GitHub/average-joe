@@ -8,7 +8,7 @@ import (
 )
 
 func (b *Bot) MsgCreate(dg *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == dg.State.User.ID {
+	if m.Author.ID == dg.State.User.ID || m.Author.Bot {
 		return
 	}
 
