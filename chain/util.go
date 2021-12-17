@@ -22,6 +22,10 @@ func simplify(msg string) string {
 	if containse {
 		words := strings.Split(msg, " ")
 		for i, word := range words {
+			if len(word) == 0 {
+				continue
+			}
+
 			changed := false
 			if word[0] == ':' {
 				word = word[1:]
