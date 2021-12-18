@@ -2,11 +2,14 @@ package chain
 
 import (
 	"bufio"
-	"encoding/json"
 	"io"
 	"os"
 	"sync"
+
+	jsoniter "github.com/json-iterator/go"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func NewChain(file string) (*Chain, error) {
 	chain := &Chain{
