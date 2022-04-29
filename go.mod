@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/Nv7-Github/Nv7Haven v0.0.0-20211112195030-3bbee8e990c5
-	github.com/bwmarrin/discordgo v0.23.3-0.20211027235626-007bf7679048
+	github.com/bwmarrin/discordgo v0.23.3-0.20220428212307-9e0783c37f5d
 	github.com/json-iterator/go v1.1.9
 )
 

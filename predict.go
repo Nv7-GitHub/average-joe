@@ -33,7 +33,7 @@ func (b *Bot) predict(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 	prediction, ok := chn.Predict(prompt)
 	if !ok {
-		b.dg.FollowupMessageCreate(clientID, i.Interaction, true, &discordgo.WebhookParams{
+		b.dg.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
 			Content: "No response to prompt found!",
 		})
 		return
@@ -42,7 +42,7 @@ func (b *Bot) predict(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	if hasPrompt {
 		prediction = prompt + " " + prediction
 	}
-	b.dg.FollowupMessageCreate(clientID, i.Interaction, true, &discordgo.WebhookParams{
+	b.dg.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
 		Content: prediction,
 	})
 }
